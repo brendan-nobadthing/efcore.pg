@@ -37,28 +37,28 @@ namespace Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping
         protected virtual string EscapeSqlLiteral([NotNull] string literal)
             => Check.NotNull(literal, nameof(literal)).Replace("'", "''");
 
-        protected override string GenerateNonNullSqlLiteral(object value)
-        {
-            switch (value)
-            {
-            case JsonDocument _:
-            case JsonElement _:
-            {
-                using var stream = new MemoryStream();
-                using var writer = new Utf8JsonWriter(stream);
-                if (value is JsonDocument doc)
-                    doc.WriteTo(writer);
-                else
-                    ((JsonElement)value).WriteTo(writer);
-                writer.Flush();
-                return $"'{EscapeSqlLiteral(Encoding.UTF8.GetString(stream.ToArray()))}'";
-            }
-            case string s:
-                return $"'{EscapeSqlLiteral(s)}'";
-            default: // User POCO
-                return $"'{EscapeSqlLiteral(JsonSerializer.Serialize(value))}'";
-            }
-        }
+//        protected override string GenerateNonNullSqlLiteral(object value)
+//        {
+//            switch (value)
+//            {
+//            case JsonDocument _:
+//            case JsonElement _:
+//            {
+//                using var stream = new MemoryStream();
+//                using var writer = new Utf8JsonWriter(stream);
+//                if (value is JsonDocument doc)
+//                    doc.WriteTo(writer);
+//                else
+//                    ((JsonElement)value).WriteTo(writer);
+//                writer.Flush();
+//                return $"'{EscapeSqlLiteral(Encoding.UTF8.GetString(stream.ToArray()))}'";
+//            }
+//            case string s:
+//                return $"'{EscapeSqlLiteral(s)}'";
+//            default: // User POCO
+//                return $"'{EscapeSqlLiteral(JsonSerializer.Serialize(value))}'";
+//            }
+//        }
 
         public override Expression GenerateCodeLiteral(object value)
             => value switch
